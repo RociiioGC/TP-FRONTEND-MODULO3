@@ -273,3 +273,7 @@ $btnOpenFavs && $btnOpenFavs.addEventListener("click", e=>{
     document.querySelector(".favorites-box").scrollIntoView({behavior:"smooth"});
   });
 
+  (async function init(){
+    await loadCountries();
+    await loadFavorites();
+  })();
