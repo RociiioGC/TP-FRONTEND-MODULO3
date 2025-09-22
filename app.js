@@ -119,6 +119,19 @@ function renderCountries(list){
     }
   }
 
+  async function loadFavorites(){
+    try{
+      const res = await fetch(MOCKAPI_URL);
+      FAVORITES = await res.json();
+      renderFavorites();
+      // sincroniza estado de botones en cards
+      renderCountries(FILTERED.length ? FILTERED : COUNTRIES);
+    }catch(e){
+      console.warn("Error cargando favoritos:", e);
+      toast("No se pudieron cargar los favoritos.", "warning");
+    }
+  }
+  
   function renderFavorites(){
     if(!FAVORITES.length){
       $favTable.innerHTML = `<tr><td colspan="5" class="has-text-centered has-text-grey">Sin favoritos todavía.</td></tr>`;
@@ -141,6 +154,52 @@ function renderCountries(list){
       </tr>
     `).join("");
   }
+
+  window.onAddFavorite = async function(cca3){
+    if (isFavorite(cca3)) {
+      toast("Este país ya está en tus favoritos.", "warning");
+      return;
+    }
+  
+    const c = COUNTRIES.find(x=> x.cca3 === cca3);
+    if(!c){ toast("País no encontrado","warning"); return; }
+  
+    const body = {
+      cca3: c.cca3,
+      name: c.name?.common || c.cca3,
+      region: c.region || "",
+      flag: c.flags?.png || c.flags?.svg || "",
+      datoCurioso: ""
+    };
+  
+    try{
+      const res = await fetch(MOCKAPI_URL, {
+        method:"POST",
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(body)
+      });
+      const created = await res.json();
+      FAVORITES.push(created);
+      renderFavorites();
+      toast("Agregado a favoritos","success");
+      renderCountries(FILTERED.length ? FILTERED : COUNTRIES);
+    }catch(e){
+      toast("No se pudo agregar a favoritos","danger");
+    }
+  };
+  
+  window.onDeleteFavorite = async function(id){
+    if(!confirm("¿Eliminar este favorito?")) return;
+    try{
+      await fetch(`${MOCKAPI_URL}/${id}`, { method:"DELETE" });
+      FAVORITES = FAVORITES.filter(f=> f.id !== id);
+      renderFavorites();
+      toast("Favorito eliminado","success");
+      renderCountries(FILTERED.length ? FILTERED : COUNTRIES);
+    }catch(e){
+      toast("Error al eliminar","danger");
+    }
+  };
 
 $fName    .addEventListener("input", applyFilters);
 $fRegion  .addEventListener("change", applyFilters);
