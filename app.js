@@ -8,3 +8,8 @@ let FILTERED  = [];
 let FAVORITES = [];
 
 let editingFavId = null;
+
+const $cards    = document.getElementById("cards");
+const $favTable = document.getElementById("fav-table");
+const $spinner  = document.getElementById("spinner");
+const $alert    = document.getElementById("alert");

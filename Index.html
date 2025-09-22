@@ -102,6 +102,29 @@
         </div>
       </div>
 
+      <div class="modal" id="modal-note">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Editar nota</p>
+            <button class="delete" aria-label="close" id="note-close"></button>
+          </header>
+          <section class="modal-card-body">
+            <input type="hidden" id="note-id">
+            <div class="field">
+              <label class="label">Dato curioso</label>
+              <div class="control">
+                <input class="input" id="note-text" placeholder="Escribe un dato curioso sobre este país">
+              </div>
+            </div>
+          </section>
+          <footer class="modal-card-foot">
+            <button class="button is-primary" id="note-save"><i class="fa-solid fa-floppy-disk mr-2"></i>Guardar</button>
+            <button class="button" id="note-cancel">Cancelar</button>
+          </footer>
+        </div>
+      </div>
+
     </div>
   </section>
 
