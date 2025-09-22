@@ -26,6 +26,27 @@ const $noteClose   = document.getElementById("note-close");
 
 const $btnOpenFavs = document.getElementById("btn-open-favs");
 
+const show = el => el.classList.remove("is-hidden");
+const hide = el => el.classList.add("is-hidden");
+function toast(msg, type="info"){
+  $alert.textContent = msg;
+  $alert.className = `notification is-${type}`;
+  show($alert);
+  setTimeout(()=> hide($alert), 2000);
+}
+function openNoteModal(id, datoCurioso=""){
+  editingFavId = id;
+  $noteId.value = id;
+  $noteText.value = datoCurioso || "";
+  $modalNote.classList.add("is-active");
+}
+function closeNoteModal(){
+  editingFavId = null;
+  $modalNote.classList.remove("is-active");
+}
+
+const isFavorite = (cca3) => FAVORITES.some(f => f.cca3 === cca3);
+
 
 function renderCountries(list){
     if(!list.length){
