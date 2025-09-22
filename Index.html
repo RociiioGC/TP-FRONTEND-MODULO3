@@ -1,50 +1,58 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <!-- COMMIT 1: Inicializar proyecto con estructura básica (head + assets) -->
+  <!-- Configuración básica del documento -->
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🌍 Países del Mundo · Buscador + Favoritos</title>
 
-  <!-- COMMIT 13: Agregar icono (icon.png) -->
+  <!-- Ícono de la pestaña del navegador -->
   <link rel="icon" type="image/png" href="icon.png">
 
-  <!-- Bulma -->
+  <!-- Framework Bulma para estilos -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-  <!-- Icons -->
+  <!-- Librería de iconos FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
+  <!-- Estilos personalizados -->
   <style>
-    /* COMMIT 10: Mejoras de estilos generales con Bulma + retoques propios */
     :root{
-      --brand:#4f46e5; /* indigo */
-      --brand-2:#7c3aed; /* violet */
-      --bg:#f7f7ff;
+      --brand:#4f46e5; 
+      --brand-2:#7c3aed; 
+      --bg:#f7f7ff;     
     }
     body{ background:var(--bg); }
     .navbar{
-      background: linear-gradient(90deg,var(--brand),var(--brand-2));
+      background: linear-gradient(90deg,var(--brand),var(--brand-2)); /* gradiente en el header */
     }
-    .navbar .navbar-item, .navbar .navbar-brand .navbar-item { color:#fff !important; font-weight:600; }
+    /* Estilos de la navbar */
+    .navbar .navbar-item, .navbar .navbar-brand .navbar-item { 
+      color:#fff !important; 
+      font-weight:600; 
+    }
+    /* Caja de filtros */
     .filters{
-      position: sticky; top:0; z-index: 5; background:#fff; border-left:4px solid var(--brand); border-radius:12px;
+      position: sticky; top:0; z-index: 5; background:#fff; 
+      border-left:4px solid var(--brand); border-radius:12px;
       box-shadow: 0 6px 18px rgba(0,0,0,.06);
     }
+    /* Banderas */
     .flag{ width:64px; height:44px; object-fit:cover; border-radius:6px; background:#eee; }
     .is-badge{ font-size:.75rem; }
-    .is-hidden{ display:none !important; }
+    .is-hidden{ display:none !important; } /* clases para ocultar elementos */
     .card{ border-radius:14px; }
+    /* Caja de favoritos */
     .favorites-box{ background:#fff; border-left:4px solid var(--brand-2); border-radius:12px; }
   </style>
 </head>
 <body>
 
-  <!-- COMMIT 2: Agregar header con Bulma (navbar) -->
+  <!-- Barra de navegación superior -->
   <nav class="navbar" role="navigation">
     <div class="container">
       <div class="navbar-brand">
+        <!-- Logo + título -->
         <a class="navbar-item" href="#">
-          <!-- COMMIT 9: Agregar logo (imagen del planeta) junto al título -->
           <figure class="image is-32x32 mr-2">
             <img class="is-rounded" src="https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg" alt="Planeta Tierra">
           </figure>
@@ -52,6 +60,7 @@
         </a>
       </div>
       <div class="navbar-end">
+        <!-- Link para abrir sección de favoritos -->
         <a id="btn-open-favs" class="navbar-item has-text-link">
           <i class="fa-solid fa-star" style="margin-right:6px;"></i>
           Mis favoritos
@@ -60,24 +69,28 @@
     </div>
   </nav>
 
+  <!-- Contenido principal -->
   <section class="section">
     <div class="container">
 
-      <!-- COMMIT 10: Mejorar estilos del título (tamaño/centrado si aplica) -->
+      <!-- Título principal -->
       <h1 class="title is-2">Buscador de Países</h1>
 
-      <!-- COMMIT 3: Implementar filtros (nombre, región, idioma + limpiar) -->
+      <!-- Caja de filtros -->
       <div class="box filters mb-5">
         <div class="columns is-variable is-2 is-multiline">
+          <!-- Título de la sección de filtros -->
           <div class="column is-12">
             <strong><i class="fa-solid fa-filter mr-2"></i>Filtros</strong>
           </div>
 
+          <!-- Filtro por nombre -->
           <div class="column is-12-mobile is-4-tablet">
             <label class="label" for="f-name">Nombre</label>
             <input id="f-name" class="input" placeholder="Ej: Argentina, Spain, Japan">
           </div>
 
+          <!-- Filtro por región -->
           <div class="column is-12-mobile is-4-tablet">
             <label class="label" for="f-region">Región</label>
             <div class="select is-fullwidth">
@@ -87,6 +100,7 @@
             </div>
           </div>
 
+          <!-- Filtro por idioma -->
           <div class="column is-12-mobile is-4-tablet">
             <label class="label" for="f-language">Idioma</label>
             <div class="select is-fullwidth">
@@ -96,6 +110,7 @@
             </div>
           </div>
 
+          <!-- Botón limpiar filtros -->
           <div class="column is-12-mobile is-3-tablet">
             <label class="label">&nbsp;</label>
             <button id="btn-clear" class="button is-light is-fullwidth">
@@ -106,27 +121,24 @@
         </div>
       </div>
 
-      <!-- COMMIT 4: Conectar con API y gestionar estados (spinner/alert) -->
+      <!-- Mensajes y spinner de carga -->
       <div id="alert" class="notification is-hidden"></div>
       <div id="spinner" class="has-text-centered is-hidden">
         <button class="button is-loading is-white is-large" style="pointer-events:none;">Cargando…</button>
       </div>
 
-      <!-- COMMIT 4: Renderizar tarjetas de países -->
+      <!-- Aquí se renderizan las tarjetas de países -->
       <div id="cards" class="columns is-multiline"></div>
 
-      <!-- COMMIT 5: Sección de favoritos (lista) -->
-      <!-- COMMIT 6: Edición y eliminación en favoritos (acciones) -->
-      <!-- COMMIT 7: Cambiar 'nota' por 'Dato curioso' -->
-      <!-- COMMIT 8: Quitar botón de actualizar/spinner en favoritos -->
+      <!-- Caja de favoritos -->
       <div class="box favorites-box mt-6">
         <div class="level">
           <div class="level-left">
             <h2 class="title is-5"><i class="fa-solid fa-star mr-2"></i>Favoritos</h2>
           </div>
-          <!-- Eliminado: botón Actualizar -->
         </div>
 
+        <!-- Tabla de favoritos -->
         <div class="table-container">
           <table class="table is-fullwidth is-striped is-hoverable">
             <thead>
@@ -146,7 +158,7 @@
     </div>
   </section>
 
-  <!-- COMMIT 6: Modal para editar “Dato curioso” -->
+  <!-- Modal para editar el “dato curioso” -->
   <div class="modal" id="modal-note">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -170,14 +182,12 @@
     </div>
   </div>
 
-  <!-- COMMIT 11: Crear footer con 3 columnas -->
-  <!-- COMMIT 12: Agregar íconos en contacto y enlaces -->
-  <!-- COMMIT 14: Ajustar colores (violeta), espaciados y créditos separados -->
+  <!-- Footer -->
   <footer class="footer has-background-link has-text-white">
     <div class="container">
       <div class="columns is-multiline">
   
-        <!-- Columna 1: logo + descripción + redes -->
+        <!-- Columna 1: Logo + descripción -->
         <div class="column is-4">
           <div class="media">
             <div class="media-left">
@@ -205,9 +215,6 @@
         <!-- Columna 2: contacto -->
         <div class="column is-4">
           <h4 class="title is-6 has-text-white">Contacto</h4>
-          <!-- (Opcional para COMMIT 13: línea decorativa bajo el título)
-          <hr class="has-background-white my-2" style="height:2px;">
-          -->
           <p><i class="fa-solid fa-location-dot mr-2"></i> Londres, Reino Unido</p>
           <p><i class="fa-solid fa-envelope mr-2"></i> contacto@paises.com</p>
           <p><i class="fa-solid fa-clock mr-2"></i> Lunes a Viernes: 9am - 6pm</p>
@@ -216,9 +223,6 @@
         <!-- Columna 3: enlaces rápidos -->
         <div class="column is-4">
           <h4 class="title is-6 has-text-white">Enlaces rápidos</h4>
-          <!-- (Opcional para COMMIT 13: línea decorativa bajo el título)
-          <hr class="has-background-white my-2" style="height:2px;">
-          -->
           <ul>
             <li><a class="has-text-white" href="#"><i class="fa-solid fa-angle-right mr-2"></i>Inicio</a></li>
             <li><a class="has-text-white" href="#"><i class="fa-solid fa-angle-right mr-2"></i>Favoritos</a></li>
@@ -229,13 +233,14 @@
   
       </div>
   
-      <!-- Créditos separados del contenido -->
+      <!-- Créditos -->
       <div class="content has-text-centered mt-6">
         <p>© 2025 · Países del Mundo · Hecho con ❤️ por Rocio Garcia Cabrera</p>
       </div>
     </div>
   </footer>
 
+  <!-- Archivo de JavaScript -->
   <script src="app.js"></script>
 </body>
 </html>
