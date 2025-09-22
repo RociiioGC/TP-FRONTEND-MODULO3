@@ -39,10 +39,13 @@ Permite filtrar, agregar a favoritos y añadir un **dato curioso** a cada país 
 
 ## 📸 Capturas
 ### Vista general
-
+https://i.postimg.cc/qqk7vnt4/temp-Image-Xxjbdy.avif
 
 ### Favoritos
+https://i.postimg.cc/V696w4kK/Lista-Favoritos.avif
 
+### Pie de Pagina 
+https://i.postimg.cc/76r6jjwC/Pie-De-Pagina.avif
 
 ---
 
