@@ -9,6 +9,28 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
   <!-- Iconos -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    :root{
+      --brand:#4f46e5; 
+      --brand-2:#7c3aed; 
+      --bg:#f7f7ff;
+    }
+    body{ background:var(--bg); }
+    .navbar{
+      background: linear-gradient(90deg,var(--brand),var(--brand-2));
+    }
+    .navbar .navbar-item, .navbar .navbar-brand .navbar-item { color:#fff !important; font-weight:600; }
+    .filters{
+      position: sticky; top:0; z-index: 5; background:#fff; border-left:4px solid var(--brand); border-radius:12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,.06);
+    }
+    .flag{ width:64px; height:44px; object-fit:cover; border-radius:6px; background:#eee; }
+    .is-badge{ font-size:.75rem; }
+    .is-hidden{ display:none !important; }
+    .card{ border-radius:14px; }
+    .favorites-box{ background:#fff; border-left:4px solid var(--brand-2); border-radius:12px; }
+  </style>
 </head>
 <body>
     <nav class="navbar" role="navigation">
@@ -31,7 +53,9 @@
       </nav>
     
       <section class="section">
-        <div class="container">
+      <div class="container">
+
+    <h1 class="title is-2">Buscador de Países</h1>
 
             <div class="box filters mb-5">
                 <div class="columns is-variable is-2 is-multiline">

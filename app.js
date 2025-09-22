@@ -17,6 +17,13 @@ const $fRegion   = document.getElementById("f-region");
 const $fLanguage = document.getElementById("f-language");
 const $btnClear  = document.getElementById("btn-clear");
 
+const $modalNote   = document.getElementById("modal-note");
+const $noteId      = document.getElementById("note-id");
+const $noteText    = document.getElementById("note-text");
+const $noteSave    = document.getElementById("note-save");
+const $noteCancel  = document.getElementById("note-cancel");
+const $noteClose   = document.getElementById("note-close");
+
 const $btnOpenFavs = document.getElementById("btn-open-favs");
 
 
@@ -131,7 +138,7 @@ function renderCountries(list){
       toast("No se pudieron cargar los favoritos.", "warning");
     }
   }
-  
+
   function renderFavorites(){
     if(!FAVORITES.length){
       $favTable.innerHTML = `<tr><td colspan="5" class="has-text-centered has-text-grey">Sin favoritos todavía.</td></tr>`;
@@ -200,6 +207,34 @@ function renderCountries(list){
       toast("Error al eliminar","danger");
     }
   };
+
+  window.onEditNote = function(id, currentDato=""){
+    openNoteModal(id, currentDato);
+  };
+  
+$noteSave.addEventListener("click", async ()=>{
+    const id          = $noteId.value;
+    const datoCurioso = $noteText.value.trim();
+    try{
+      const res = await fetch(`${MOCKAPI_URL}/${id}`, {
+        method:"PUT",
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ datoCurioso })
+      });
+      const updated = await res.json();
+      const idx = FAVORITES.findIndex(f=> f.id===id);
+      if(idx>-1) FAVORITES[idx] = updated;
+      renderFavorites();
+      toast("Dato curioso actualizado","success");
+      closeNoteModal();
+    }catch(e){
+      toast("No se pudo actualizar el dato curioso","danger");
+    }
+  });
+  
+$noteCancel.addEventListener("click", closeNoteModal);
+$noteClose .addEventListener("click", closeNoteModal);
+  
 
 $fName    .addEventListener("input", applyFilters);
 $fRegion  .addEventListener("change", applyFilters);
