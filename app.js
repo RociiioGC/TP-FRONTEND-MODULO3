@@ -12,6 +12,14 @@ const $favTable = document.getElementById("fav-table");
 const $spinner  = document.getElementById("spinner");
 const $alert    = document.getElementById("alert");
 
+const $fName     = document.getElementById("f-name");
+const $fRegion   = document.getElementById("f-region");
+const $fLanguage = document.getElementById("f-language");
+const $btnClear  = document.getElementById("btn-clear");
+
+const $btnOpenFavs = document.getElementById("btn-open-favs");
+
+
 function renderCountries(list){
     if(!list.length){
       $cards.innerHTML = `
@@ -111,6 +119,29 @@ function renderCountries(list){
     }
   }
 
+  function renderFavorites(){
+    if(!FAVORITES.length){
+      $favTable.innerHTML = `<tr><td colspan="5" class="has-text-centered has-text-grey">Sin favoritos todavía.</td></tr>`;
+      return;
+    }
+    $favTable.innerHTML = FAVORITES.map(f => `
+      <tr>
+        <td><img src="${f.flag||''}" alt="${f.name||f.cca3}" style="width:40px;height:28px;object-fit:cover;border-radius:4px"></td>
+        <td>${f.name||f.cca3}</td>
+        <td>${f.region||'—'}</td>
+        <td>${f.datoCurioso||'—'}</td>
+        <td class="has-text-right">
+          <button class="button is-warning is-light is-small" onclick='onEditNote("${f.id}","${(f.datoCurioso||'').replace(/"/g,'&quot;')}")'>
+            <span class="icon"><i class="fa-solid fa-pen-to-square"></i></span>
+          </button>
+          <button class="button is-danger is-light is-small" onclick='onDeleteFavorite("${f.id}")'>
+            <span class="icon"><i class="fa-solid fa-trash"></i></span>
+          </button>
+        </td>
+      </tr>
+    `).join("");
+  }
+
 $fName    .addEventListener("input", applyFilters);
 $fRegion  .addEventListener("change", applyFilters);
 $fLanguage.addEventListener("change", applyFilters);
@@ -119,4 +150,11 @@ $btnClear .addEventListener("click", e=>{
   $fName.value=""; $fRegion.value=""; $fLanguage.value="";
   applyFilters();
 });
-    
+
+const $btnOpenFavs = document.getElementById("btn-open-favs");
+
+$btnOpenFavs && $btnOpenFavs.addEventListener("click", e=>{
+    e.preventDefault();
+    document.querySelector(".favorites-box").scrollIntoView({behavior:"smooth"});
+  });
+
