@@ -18,8 +18,11 @@ Permite filtrar, agregar a favoritos y añadir un **dato curioso** a cada país 
 
 ## 📂 Estructura del proyecto
 ├── index.html      # Página principal
+
 ├── app.js          # Lógica con fetch, filtros y favoritos
+
 ├── README.md       # Documentación del proyecto
+
 ├── icon.png        # Ícono de la aplicación
 
 ---
