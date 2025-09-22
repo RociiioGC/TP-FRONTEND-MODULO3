@@ -32,6 +32,79 @@
     
       <section class="section">
         <div class="container">
+
+            <div class="box filters mb-5">
+                <div class="columns is-variable is-2 is-multiline">
+                  <div class="column is-12">
+                    <strong><i class="fa-solid fa-filter mr-2"></i>Filtros</strong>
+                  </div>
+        
+                  <div class="column is-12-mobile is-4-tablet">
+                    <label class="label" for="f-name">Nombre</label>
+                    <input id="f-name" class="input" placeholder="Ej: Argentina, Spain, Japan">
+                  </div>
+        
+                  <div class="column is-12-mobile is-4-tablet">
+                    <label class="label" for="f-region">Región</label>
+                    <div class="select is-fullwidth">
+                      <select id="f-region">
+                        <option value="">Todas</option>
+                      </select>
+                    </div>
+                  </div>
+        
+                  <div class="column is-12-mobile is-4-tablet">
+                    <label class="label" for="f-language">Idioma</label>
+                    <div class="select is-fullwidth">
+                      <select id="f-language">
+                        <option value="">Todos</option>
+                      </select>
+                    </div>
+                  </div>
+        
+                  <div class="column is-12-mobile is-3-tablet">
+                    <label class="label">&nbsp;</label>
+                    <button id="btn-clear" class="button is-light is-fullwidth">
+                      <span class="icon"><i class="fa-solid fa-broom"></i></span>
+                      <span>Limpiar filtros</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+      <div id="alert" class="notification is-hidden"></div>
+      <div id="spinner" class="has-text-centered is-hidden">
+        <button class="button is-loading is-white is-large" style="pointer-events:none;">Cargando…</button>
+      </div>
+
+      <div id="cards" class="columns is-multiline"></div>
+
+      <div class="box favorites-box mt-6">
+        <div class="level">
+          <div class="level-left">
+            <h2 class="title is-5"><i class="fa-solid fa-star mr-2"></i>Favoritos</h2>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="table is-fullwidth is-striped is-hoverable">
+            <thead>
+              <tr>
+                <th>Bandera</th>
+                <th>País</th>
+                <th>Región</th>
+                <th>Dato curioso</th>
+                <th class="has-text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="fav-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
     
   <script src="app.js"></script>
 </body>
