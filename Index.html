@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <!-- COMMIT 1: Inicializar proyecto con estructura básica (head + assets) -->
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🌍 Países del Mundo · Buscador + Favoritos</title>
 
+  <!-- COMMIT 13: Agregar icono (icon.png) -->
+  <link rel="icon" type="image/png" href="icon.png">
+
   <!-- Bulma -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-  <!-- Iconos -->
+  <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
   <style>
+    /* COMMIT 10: Mejoras de estilos generales con Bulma + retoques propios */
     :root{
-      --brand:#4f46e5; 
-      --brand-2:#7c3aed; 
+      --brand:#4f46e5; /* indigo */
+      --brand-2:#7c3aed; /* violet */
       --bg:#f7f7ff;
     }
     body{ background:var(--bg); }
@@ -33,81 +38,93 @@
   </style>
 </head>
 <body>
-    <nav class="navbar" role="navigation">
-        <div class="container">
-          <div class="navbar-brand">
-            <a class="navbar-item" href="#">
-              <figure class="image is-32x32 mr-2">
-                <img class="is-rounded" src="https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg" alt="Planeta Tierra">
-              </figure>
-              <strong>Países del Mundo</strong>
-            </a>
+
+  <!-- COMMIT 2: Agregar header con Bulma (navbar) -->
+  <nav class="navbar" role="navigation">
+    <div class="container">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="#">
+          <!-- COMMIT 9: Agregar logo (imagen del planeta) junto al título -->
+          <figure class="image is-32x32 mr-2">
+            <img class="is-rounded" src="https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg" alt="Planeta Tierra">
+          </figure>
+          <strong>Países del Mundo</strong>
+        </a>
+      </div>
+      <div class="navbar-end">
+        <a id="btn-open-favs" class="navbar-item has-text-link">
+          <i class="fa-solid fa-star" style="margin-right:6px;"></i>
+          Mis favoritos
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="section">
+    <div class="container">
+
+      <!-- COMMIT 10: Mejorar estilos del título (tamaño/centrado si aplica) -->
+      <h1 class="title is-2">Buscador de Países</h1>
+
+      <!-- COMMIT 3: Implementar filtros (nombre, región, idioma + limpiar) -->
+      <div class="box filters mb-5">
+        <div class="columns is-variable is-2 is-multiline">
+          <div class="column is-12">
+            <strong><i class="fa-solid fa-filter mr-2"></i>Filtros</strong>
           </div>
-          <div class="navbar-end">
-            <a id="btn-open-favs" class="navbar-item has-text-link">
-              <i class="fa-solid fa-star" style="margin-right:6px;"></i>
-              Mis favoritos
-            </a>
+
+          <div class="column is-12-mobile is-4-tablet">
+            <label class="label" for="f-name">Nombre</label>
+            <input id="f-name" class="input" placeholder="Ej: Argentina, Spain, Japan">
+          </div>
+
+          <div class="column is-12-mobile is-4-tablet">
+            <label class="label" for="f-region">Región</label>
+            <div class="select is-fullwidth">
+              <select id="f-region">
+                <option value="">Todas</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="column is-12-mobile is-4-tablet">
+            <label class="label" for="f-language">Idioma</label>
+            <div class="select is-fullwidth">
+              <select id="f-language">
+                <option value="">Todos</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="column is-12-mobile is-3-tablet">
+            <label class="label">&nbsp;</label>
+            <button id="btn-clear" class="button is-light is-fullwidth">
+              <span class="icon"><i class="fa-solid fa-broom"></i></span>
+              <span>Limpiar filtros</span>
+            </button>
           </div>
         </div>
-      </nav>
-    
-      <section class="section">
-      <div class="container">
+      </div>
 
-    <h1 class="title is-2">Buscador de Países</h1>
-
-            <div class="box filters mb-5">
-                <div class="columns is-variable is-2 is-multiline">
-                  <div class="column is-12">
-                    <strong><i class="fa-solid fa-filter mr-2"></i>Filtros</strong>
-                  </div>
-        
-                  <div class="column is-12-mobile is-4-tablet">
-                    <label class="label" for="f-name">Nombre</label>
-                    <input id="f-name" class="input" placeholder="Ej: Argentina, Spain, Japan">
-                  </div>
-        
-                  <div class="column is-12-mobile is-4-tablet">
-                    <label class="label" for="f-region">Región</label>
-                    <div class="select is-fullwidth">
-                      <select id="f-region">
-                        <option value="">Todas</option>
-                      </select>
-                    </div>
-                  </div>
-        
-                  <div class="column is-12-mobile is-4-tablet">
-                    <label class="label" for="f-language">Idioma</label>
-                    <div class="select is-fullwidth">
-                      <select id="f-language">
-                        <option value="">Todos</option>
-                      </select>
-                    </div>
-                  </div>
-        
-                  <div class="column is-12-mobile is-3-tablet">
-                    <label class="label">&nbsp;</label>
-                    <button id="btn-clear" class="button is-light is-fullwidth">
-                      <span class="icon"><i class="fa-solid fa-broom"></i></span>
-                      <span>Limpiar filtros</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
+      <!-- COMMIT 4: Conectar con API y gestionar estados (spinner/alert) -->
       <div id="alert" class="notification is-hidden"></div>
       <div id="spinner" class="has-text-centered is-hidden">
         <button class="button is-loading is-white is-large" style="pointer-events:none;">Cargando…</button>
       </div>
 
+      <!-- COMMIT 4: Renderizar tarjetas de países -->
       <div id="cards" class="columns is-multiline"></div>
 
+      <!-- COMMIT 5: Sección de favoritos (lista) -->
+      <!-- COMMIT 6: Edición y eliminación en favoritos (acciones) -->
+      <!-- COMMIT 7: Cambiar 'nota' por 'Dato curioso' -->
+      <!-- COMMIT 8: Quitar botón de actualizar/spinner en favoritos -->
       <div class="box favorites-box mt-6">
         <div class="level">
           <div class="level-left">
             <h2 class="title is-5"><i class="fa-solid fa-star mr-2"></i>Favoritos</h2>
           </div>
+          <!-- Eliminado: botón Actualizar -->
         </div>
 
         <div class="table-container">
@@ -126,32 +143,36 @@
         </div>
       </div>
 
-      <div class="modal" id="modal-note">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-          <header class="modal-card-head">
-            <p class="modal-card-title">Editar nota</p>
-            <button class="delete" aria-label="close" id="note-close"></button>
-          </header>
-          <section class="modal-card-body">
-            <input type="hidden" id="note-id">
-            <div class="field">
-              <label class="label">Dato curioso</label>
-              <div class="control">
-                <input class="input" id="note-text" placeholder="Escribe un dato curioso sobre este país">
-              </div>
-            </div>
-          </section>
-          <footer class="modal-card-foot">
-            <button class="button is-primary" id="note-save"><i class="fa-solid fa-floppy-disk mr-2"></i>Guardar</button>
-            <button class="button" id="note-cancel">Cancelar</button>
-          </footer>
-        </div>
-      </div>
-
     </div>
   </section>
 
+  <!-- COMMIT 6: Modal para editar “Dato curioso” -->
+  <div class="modal" id="modal-note">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Editar nota</p>
+        <button class="delete" aria-label="close" id="note-close"></button>
+      </header>
+      <section class="modal-card-body">
+        <input type="hidden" id="note-id">
+        <div class="field">
+          <label class="label">Dato curioso</label>
+          <div class="control">
+            <input class="input" id="note-text" placeholder="Escribe un dato curioso sobre este país">
+          </div>
+        </div>
+      </section>
+      <footer class="modal-card-foot">
+        <button class="button is-primary" id="note-save"><i class="fa-solid fa-floppy-disk mr-2"></i>Guardar</button>
+        <button class="button" id="note-cancel">Cancelar</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- COMMIT 11: Crear footer con 3 columnas -->
+  <!-- COMMIT 12: Agregar íconos en contacto y enlaces -->
+  <!-- COMMIT 14: Ajustar colores (violeta), espaciados y créditos separados -->
   <footer class="footer has-background-link has-text-white">
     <div class="container">
       <div class="columns is-multiline">
@@ -184,13 +205,20 @@
         <!-- Columna 2: contacto -->
         <div class="column is-4">
           <h4 class="title is-6 has-text-white">Contacto</h4>
+          <!-- (Opcional para COMMIT 13: línea decorativa bajo el título)
+          <hr class="has-background-white my-2" style="height:2px;">
+          -->
           <p><i class="fa-solid fa-location-dot mr-2"></i> Londres, Reino Unido</p>
           <p><i class="fa-solid fa-envelope mr-2"></i> contacto@paises.com</p>
+          <p><i class="fa-solid fa-clock mr-2"></i> Lunes a Viernes: 9am - 6pm</p>
         </div>
   
         <!-- Columna 3: enlaces rápidos -->
         <div class="column is-4">
           <h4 class="title is-6 has-text-white">Enlaces rápidos</h4>
+          <!-- (Opcional para COMMIT 13: línea decorativa bajo el título)
+          <hr class="has-background-white my-2" style="height:2px;">
+          -->
           <ul>
             <li><a class="has-text-white" href="#"><i class="fa-solid fa-angle-right mr-2"></i>Inicio</a></li>
             <li><a class="has-text-white" href="#"><i class="fa-solid fa-angle-right mr-2"></i>Favoritos</a></li>
@@ -201,13 +229,13 @@
   
       </div>
   
+      <!-- Créditos separados del contenido -->
       <div class="content has-text-centered mt-6">
         <p>© 2025 · Países del Mundo · Hecho con ❤️ por Rocio Garcia Cabrera</p>
       </div>
     </div>
   </footer>
 
-    
   <script src="app.js"></script>
 </body>
-</html> 
+</html>
