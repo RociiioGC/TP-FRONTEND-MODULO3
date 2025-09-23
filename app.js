@@ -1,4 +1,4 @@
-// =======================
+/ =======================
 // Config
 // =======================
 const COUNTRIES_URL = "https://restcountries.com/v3.1/all?fields=name,cca3,region,languages,flags,population,capital";
