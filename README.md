@@ -27,13 +27,14 @@ Permite filtrar, agregar a favoritos y añadir un **dato curioso** a cada país 
 ---
 
 ## ⚙️ Funcionalidades
-✅ Mostrar todos los países en tarjetas con bandera, región, capital, idiomas y población.
-✅ Filtrar por **nombre**, **región** o **idioma** en tiempo real.
-✅ Crear y agregar nuevo país a la lista. 
-✅ Agregar y eliminar países de **favoritos**.  
-✅ Editar un **dato curioso** para cada país favorito (guardado en MockAPI).  
-✅ Interfaz con **Bulma** y **Font Awesome**.  
-✅ Footer con información de contacto, enlaces rápidos y redes sociales.  
+
+✅ Mostrar todos los países en tarjetas con bandera, región, capital, idiomas y población  
+✅ Filtrar por nombre, región o idioma en tiempo real  
+✅ Crear y agregar nuevo país a la lista  
+✅ Agregar y eliminar países de favoritos  
+✅ Editar un dato curioso para cada país favorito (guardado en MockAPI)  
+✅ Interfaz con Bulma y Font Awesome  
+✅ Footer con información de contacto, enlaces rápidos y redes sociales    
 
 ---
 
