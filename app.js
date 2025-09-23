@@ -72,6 +72,14 @@ function closeNoteModal(){
   $modalNote.classList.remove("is-active");
 }
 
+function openCreateModal(){
+  if($createForm) $createForm.reset();
+  $modalCreate.classList.add("is-active");
+}
+function closeCreateModal(){
+  $modalCreate.classList.remove("is-active");
+
+}
 const isFavorite = (cca3) => FAVORITES.some(f => f.cca3 === cca3);
 
 // =======================
@@ -168,6 +176,9 @@ async function loadCountries(){
     document.getElementById("f-language").innerHTML =
       `<option value="">Todos</option>` + languages.map(l=> `<option value="${l}">${l}</option>`).join("");
 
+  // Cargar países propios desde MockAPI
+    await loadCustomCountries();
+
     applyFilters();
   }catch(e){
     console.error(e);
@@ -175,6 +186,43 @@ async function loadCountries(){
   }finally{
     hide($spinner);
   }
+}
+
+// cargar países propios desde MockAPI (opcional)
+async function loadCustomCountries(){
+  if(!CUSTOM_COUNTRIES_URL || !CUSTOM_COUNTRIES_URL.includes("http")) return;
+  try{
+    const res = await fetch(CUSTOM_COUNTRIES_URL);
+    if(!res.ok) return;
+    const custom = await res.json();
+
+// mapear al mismo shape de REST Countries
+    const mapped = custom.map(item => ({
+      cca3: (item.cca3 || "").toUpperCase(),
+      name: { common: item.name || item.cca3 || "—" },
+      region: item.region || "",
+      capital: item.capital ? [item.capital] : [],
+      languages: parseLanguagesToObject(item.languages),
+      population: Number(item.population) || 0,
+      flags: { png: item.flag || "", svg: item.flag || "" }
+    }));
+
+// mezclar y ordenar
+    COUNTRIES = [...COUNTRIES, ...mapped]
+      .sort((a,b)=> (a.name?.common||"").localeCompare(b.name?.common||""));
+  }catch(e){
+    console.warn("No se pudieron cargar países propios:", e);
+  }
+}
+
+// helper para pasar "es, en" (español, ingles) 
+function parseLanguagesToObject(input){
+  if(!input) return null;
+  const arr = String(input).split(",").map(s=> s.trim()).filter(Boolean);
+  if(!arr.length) return null;
+  const obj = {};
+  arr.forEach(lang => { obj[lang] = lang; });
+  return obj;
 }
 
 // =======================
@@ -288,6 +336,49 @@ $noteSave.addEventListener("click", async ()=>{
 
 $noteCancel.addEventListener("click", closeNoteModal);
 $noteClose .addEventListener("click", closeNoteModal);
+
+// =======================
+// Modal Crear País
+// =======================
+$btnOpenCreate.addEventListener("click", ()=> $modalCreate.classList.add("is-active"));
+$btnCreateCancel.addEventListener("click", ()=> $modalCreate.classList.remove("is-active"));
+$createClose.addEventListener("click", ()=> $modalCreate.classList.remove("is-active"));
+
+// =======================
+// Crear País (POST)
+// =======================
+$btnCreateSave.addEventListener("click", async ()=>{
+  const formData = new FormData($createForm);
+  const body = {
+    name: formData.get("name"),
+    cca3: formData.get("cca3").toUpperCase(),
+    region: formData.get("region"),
+    capital: formData.get("capital") || "—",
+    languages: formData.get("languages") 
+      ? formData.get("languages").split(",").map(l=>l.trim()) 
+      : [],
+    population: Number(formData.get("population") || 0),
+    flags: { png: formData.get("flag"), svg: formData.get("flag") }
+  };
+
+  try{
+    const res = await fetch(CUSTOM_COUNTRIES_URL, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify(body)
+    });
+    const created = await res.json();
+
+    COUNTRIES.push(created);   // agregar al array local
+    applyFilters();            // refrescar vista
+    toast("País creado correctamente","success");
+    $modalCreate.classList.remove("is-active");
+    $createForm.reset();
+  }catch(e){
+    console.error(e);
+    toast("Error al crear país","danger");
+  }
+});
 
 // =======================
 // Eventos filtros

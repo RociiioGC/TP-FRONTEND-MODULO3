@@ -78,6 +78,82 @@
         <span>Agregar país</span>
       </button>
     </div>
+
+    <div class="modal" id="modal-create">
+      <div class="modal-background"></div>
+    
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Agregar País</p>
+          <button class="delete" aria-label="close" id="create-close"></button>
+        </header>
+    
+        <section class="modal-card-body">
+          <!-- Estructura del formulario con campos e IDs/NAMEs consistentes -->
+          <form id="create-form">
+            <div class="columns is-multiline">
+              <div class="column is-6">
+                <label class="label">Nombre*</label>
+                <input class="input" name="name" required placeholder="Ej: Wakanda">
+              </div>
+    
+              <div class="column is-3">
+                <label class="label">Código (CCA3)*</label>
+                <input class="input" name="cca3" maxlength="3" required placeholder="Ej: WAK">
+              </div>
+    
+              <div class="column is-3">
+                <label class="label">Región*</label>
+                <div class="select is-fullwidth">
+                  <select name="region" required>
+                    <option value="">Elegí…</option>
+                    <option>Africa</option>
+                    <option>Americas</option>
+                    <option>Asia</option>
+                    <option>Europe</option>
+                    <option>Oceania</option>
+                  </select>
+                </div>
+              </div>
+    
+              <div class="column is-6">
+                <label class="label">Capital</label>
+                <input class="input" name="capital" placeholder="Ej: Birnin Zana">
+              </div>
+    
+              <div class="column is-6">
+                <label class="label">Idiomas (separados por coma)</label>
+                <input class="input" name="languages" placeholder="Ej: Wakandan, English">
+              </div>
+    
+              <div class="column is-6">
+                <label class="label">Población</label>
+                <input class="input" name="population" type="number" min="0" placeholder="Ej: 3500000">
+              </div>
+    
+              <div class="column is-6">
+                <label class="label">Flag URL (PNG/SVG)*</label>
+                <input class="input" name="flag" required placeholder="https://…/flag.png">
+              </div>
+            </div>
+          </form>
+    
+          <p class="is-size-7 has-text-grey">
+            <strong>Nota:</strong> estos países se guardan en tu MockAPI y se suman a la grilla junto con los de REST Countries.
+          </p>
+        </section>
+    
+        <footer class="modal-card-foot">
+          <!-- Botones del modal (guardar/cancelar) -->
+          <button class="button is-primary" id="create-save">
+            <span class="icon"><i class="fa-solid fa-floppy-disk"></i></span>
+            <span>Guardar</span>
+          </button>
+          <button class="button" id="create-cancel">Cancelar</button>
+        </footer>
+      </div>
+    </div>
+  
     <div class="container">
 
       <!-- Título principal -->
