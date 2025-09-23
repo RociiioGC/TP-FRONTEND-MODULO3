@@ -1,8 +1,12 @@
-/ =======================
+// =======================
 // Config
 // =======================
+// MOCKAPI endpoint "favorites" + info traida de REST countries 
 const COUNTRIES_URL = "https://restcountries.com/v3.1/all?fields=name,cca3,region,languages,flags,population,capital";
 const MOCKAPI_URL   = "https://68bdeb02227c48698f85a6c4.mockapi.io/api/v1/favorites";
+
+// MOCKAPI endpoint "countries" para países creados 
+const CUSTOM_COUNTRIES_URL = "https://68bdeb02227c48698f85a6c4.mockapi.io/api/v1/countries";
 
 // =======================
 // Estado
@@ -20,6 +24,14 @@ const $cards    = document.getElementById("cards");
 const $favTable = document.getElementById("fav-table");
 const $spinner  = document.getElementById("spinner");
 const $alert    = document.getElementById("alert");
+
+// refs para modal crear país
+const $modalCreate     = document.getElementById("modal-create");
+const $btnOpenCreate   = document.getElementById("btn-open-create");
+const $btnCreateSave   = document.getElementById("create-save");
+const $btnCreateCancel = document.getElementById("create-cancel");
+const $createClose     = document.getElementById("create-close");
+const $createForm      = document.getElementById("create-form");
 
 // filtros
 const $fName     = document.getElementById("f-name");
@@ -60,7 +72,6 @@ function closeNoteModal(){
   $modalNote.classList.remove("is-active");
 }
 
-// 👉 Helper: ¿ya es favorito este cca3?
 const isFavorite = (cca3) => FAVORITES.some(f => f.cca3 === cca3);
 
 // =======================
