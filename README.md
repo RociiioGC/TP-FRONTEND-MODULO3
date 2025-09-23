@@ -23,7 +23,6 @@ Permite filtrar, agregar a favoritos y añadir un **dato curioso** a cada país 
 
 ├── README.md       # Documentación del proyecto
 
-├── icon.png        # Ícono de la aplicación
 
 ---
 
