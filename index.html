@@ -165,7 +165,7 @@
           <!-- Filtro por nombre -->
           <div class="column is-12-mobile is-4-tablet">
             <label class="label" for="f-name">Nombre</label>
-            <input id="f-name" class="input" placeholder="Ej: Argentina, Spain, Japan">
+            <input id="f-name" class="input">
           </div>
 
           <!-- Filtro por región -->
@@ -261,27 +261,56 @@
   </div>
 
   <!-- Modal de Alertas (Bulma) -->
-<div class="modal" id="modal-alert">
-  <div class="modal-background"></div>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title" id="alert-title">Aviso</p>
-      <button class="delete" aria-label="close" id="alert-close"></button>
-    </header>
-    <section class="modal-card-body">
-      <article class="message is-info" id="alert-box">
-        <div class="message-header">
-          <p id="alert-header">Mensaje</p>
-          <button class="delete" aria-label="close" id="alert-x"></button>
-        </div>
-        <div class="message-body" id="alert-text">…</div>
-      </article>
-    </section>
-    <footer class="modal-card-foot">
-      <button class="button is-primary" id="alert-ok">OK</button>
-    </footer>
+  <div class="modal" id="modal-alert">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title" id="alert-title">Aviso</p>
+        <button class="delete" aria-label="close" id="alert-close"></button>
+      </header>
+      <section class="modal-card-body">
+        <article class="message is-info" id="alert-box">
+          <div class="message-header">
+            <p id="alert-header">Mensaje</p>
+            <button class="delete" aria-label="close" id="alert-x"></button>
+          </div>
+          <div class="message-body" id="alert-text">…</div>
+        </article>
+      </section>
+      <footer class="modal-card-foot">
+        <button class="button is-primary" id="alert-ok">OK</button>
+      </footer>
+    </div>
   </div>
-</div>
+
+  <!-- Modal de Confirmación (Bulma) -->
+  <div class="modal" id="modal-confirm">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title" id="confirm-title">¿Confirmar?</p>
+        <button class="delete" aria-label="close" id="confirm-x"></button>
+      </header>
+      <section class="modal-card-body">
+        <article class="message is-warning" id="confirm-box">
+          <div class="message-header">
+            <p id="confirm-header">Atención</p>
+            <button class="delete" aria-label="close" id="confirm-x-dup"></button>
+          </div>
+          <div class="message-body" id="confirm-text">
+            ¿Seguro que querés continuar?
+          </div>
+        </article>
+      </section>
+      <footer class="modal-card-foot">
+        <button class="button" id="confirm-cancel">Cancelar</button>
+        <button class="button is-danger" id="confirm-ok">
+          <span class="icon"><i class="fa-solid fa-trash"></i></span>
+          <span>Eliminar</span>
+        </button>
+      </footer>
+    </div>
+  </div>
 
   <!-- Footer -->
   <footer class="footer has-background-link has-text-white">
@@ -297,7 +326,7 @@
               </figure>
             </div>
             <div class="media-content">
-              <p class="title is-6 has-text-white mb-1">Países del Mundo</p>
+              <p class="title is-6 has-text-white mb-3">Países del Mundo</p>
               <p class="is-size-7">
                 Proyecto educativo que muestra información de todos los países del mundo, 
                 integrando la API de <em>REST Countries</em> y un sistema de favoritos con MockAPI.
@@ -314,11 +343,23 @@
         </div>
   
         <!-- Columna 2: contacto -->
-        <div class="column is-4">
-          <h4 class="title is-6 has-text-white">Contacto</h4>
-          <p><i class="fa-solid fa-location-dot mr-2"></i> Londres, Reino Unido</p>
-          <p><i class="fa-solid fa-envelope mr-2"></i> contacto@paises.com</p>
-        </div>
+<div class="column is-4">
+  <h4 class="title is-6 has-text-white">Contacto</h4>
+
+  <div class="icon-text mb-2">
+    <span class="icon has-text-white">
+      <i class="fa-solid fa-location-dot fa-fw"></i>
+    </span>
+    <span>Londres, Reino Unido</span>
+  </div>
+
+  <div class="icon-text">
+    <span class="icon has-text-white">
+      <i class="fa-solid fa-envelope fa-fw"></i>
+    </span>
+    <span>contacto@paises.com</span>
+  </div>
+</div>
   
         <!-- Columna 3: enlaces rápidos -->
         <div class="column is-4">
