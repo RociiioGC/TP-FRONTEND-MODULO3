@@ -135,6 +135,67 @@ function showBulmaAlert({
   $btnOk.addEventListener("click", close);
 }
 
+// =======================
+// Bulma Confirm (Promise) — usa #modal-confirm del HTML
+// =======================
+function openBulmaConfirm({
+  title = "¿Confirmar?",
+  header = "Atención",
+  message = "¿Seguro que querés continuar?",
+  okText = "Aceptar",
+  cancelText = "Cancelar",
+  okColor = "is-danger" // is-primary / is-warning / etc
+} = {}) {
+  return new Promise(resolve => {
+    const $m       = document.getElementById("modal-confirm");
+    if(!$m){
+      // fallback si no existe el modal (no rompe el flujo)
+      const ok = window.confirm(message);
+      resolve(ok);
+      return;
+    }
+
+    const $title   = document.getElementById("confirm-title");
+    const $header  = document.getElementById("confirm-header");
+    const $text    = document.getElementById("confirm-text");
+    const $x       = document.getElementById("confirm-x");
+    const $cancel  = document.getElementById("confirm-cancel");
+    const $ok      = document.getElementById("confirm-ok");
+
+    $title.textContent  = title;
+    $header.textContent = header;
+    $text.textContent   = message;
+
+    // Botón OK: color + etiqueta
+    $ok.className = `button ${okColor}`;
+    const okLabelSpan = $ok.querySelector("span:last-child");
+    if (okLabelSpan) okLabelSpan.textContent = okText;
+    else $ok.textContent = okText;
+
+    $cancel.textContent = cancelText;
+
+    const close = (val) => {
+      $m.classList.remove("is-active");
+      $x.removeEventListener("click", onCancel);
+      $cancel.removeEventListener("click", onCancel);
+      $ok.removeEventListener("click", onOk);
+      document.removeEventListener("keydown", onEsc);
+      resolve(val);
+    };
+    const onCancel = () => close(false);
+    const onOk     = () => close(true);
+    const onEsc    = (e) => { if (e.key === "Escape") close(false); };
+
+    $x.addEventListener("click", onCancel);
+    $cancel.addEventListener("click", onCancel);
+    $ok.addEventListener("click", onOk);
+    document.addEventListener("keydown", onEsc);
+
+    $m.classList.add("is-active");
+    $ok.focus();
+  });
+}
+
 function openNoteModal(id, datoCurioso=""){
   editingFavId = id;
   $noteId.value = id;
@@ -373,8 +434,16 @@ window.onAddFavorite = async function(cca3){
 };
 
 window.onDeleteFavorite = async function(id){
+  const ok = await openBulmaConfirm({
+    title: "Eliminar favorito",
+    header: "Confirmación",
+    message: "¿Querés eliminar este país de tus favoritos?",
+    okText: "Eliminar",
+    cancelText: "Cancelar",
+    okColor: "is-danger"
+  });
+  if (!ok) return;
 
-  if(!confirm("¿Eliminar este favorito?")) return;
   try{
     await fetch(`${MOCKAPI_URL}/${id}`, { method:"DELETE" });
     FAVORITES = FAVORITES.filter(f=> f.id !== id);
@@ -430,7 +499,6 @@ $createSave && $createSave.addEventListener("click", async ()=>{
   // tomar valores
   const fd = new FormData($createForm);
   const name       = (fd.get("name")||"").toString().trim();
-  const cca3       = (fd.get("cca3")||"").toString().trim().toUpperCase();
   const region     = (fd.get("region")||"").toString().trim();
   const capital    = (fd.get("capital")||"").toString().trim();
   const languages  = (fd.get("languages")||"").toString().trim();
@@ -438,25 +506,14 @@ $createSave && $createSave.addEventListener("click", async ()=>{
   const flag       = (fd.get("flag")||"").toString().trim(); 
 
   // validaciones mínimas 
-  if(!name || !cca3 || !region){
-    toast("Completá los campos obligatorios: nombre, CCA3 y región.", "warning");
-    return;
-  }
-  if(!/^[A-Z]{3}$/.test(cca3)){
-    toast("El CCA3 debe ser 3 letras (A–Z).", "warning");
-    return;
-  }
-  // evitar duplicados por cca3
-  const exists = COUNTRIES.some(c => (c.cca3||"").toUpperCase() === cca3);
-  if(exists){
-    toast("Ya existe un país con ese CCA3.", "warning");
+  if(!name || !region){
+    toast("Completá los campos obligatorios: nombre y región.", "warning");
     return;
   }
 
   // objeto para MockAPI countries 
   const payload = {
     name,
-    cca3,
     region,
     capital,
     languages,     
@@ -474,7 +531,6 @@ $createSave && $createSave.addEventListener("click", async ()=>{
       if(!res.ok) throw new Error("HTTP "+res.status);
       // mapear al shape de las cards y sumar a COUNTRIES
       const mapped = {
-        cca3,
         name: { common: name },
         region,
         capital: capital ? [capital] : [],
@@ -491,7 +547,6 @@ $createSave && $createSave.addEventListener("click", async ()=>{
     }else{
       // sin URL configurada: agregar localmente igual
       const mapped = {
-        cca3,
         name: { common: name },
         region,
         capital: capital ? [capital] : [],
@@ -503,7 +558,7 @@ $createSave && $createSave.addEventListener("click", async ()=>{
       COUNTRIES.sort((a,b)=> (a.name?.common||"").localeCompare(b.name?.common||""));
       applyFilters();
       closeCreateModal();
-      toast("País agregado localmente (configura CUSTOM_COUNTRIES_URL para persistir).", "warning");
+      toast("País agregado localmente.", "warning");
     }
   }catch(e){
     console.error(e);
