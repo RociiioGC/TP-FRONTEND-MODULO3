@@ -1,11 +1,10 @@
 // =======================
 // Config
 // =======================
-// MOCKAPI endpoint "favorites" + info traida de REST countries 
 const COUNTRIES_URL = "https://restcountries.com/v3.1/all?fields=name,cca3,region,languages,flags,population,capital";
 const MOCKAPI_URL   = "https://68bdeb02227c48698f85a6c4.mockapi.io/api/v1/favorites";
 
-// MOCKAPI endpoint "countries" para países creados 
+// recurso de países propios creado en MockAPI como 'countries'
 const CUSTOM_COUNTRIES_URL = "https://68bdeb02227c48698f85a6c4.mockapi.io/api/v1/countries";
 
 // =======================
@@ -25,21 +24,13 @@ const $favTable = document.getElementById("fav-table");
 const $spinner  = document.getElementById("spinner");
 const $alert    = document.getElementById("alert");
 
-// refs para modal crear país
-const $modalCreate     = document.getElementById("modal-create");
-const $btnOpenCreate   = document.getElementById("btn-open-create");
-const $btnCreateSave   = document.getElementById("create-save");
-const $btnCreateCancel = document.getElementById("create-cancel");
-const $createClose     = document.getElementById("create-close");
-const $createForm      = document.getElementById("create-form");
-
 // filtros
 const $fName     = document.getElementById("f-name");
 const $fRegion   = document.getElementById("f-region");
 const $fLanguage = document.getElementById("f-language");
 const $btnClear  = document.getElementById("btn-clear");
 
-// modal
+// modal editar dato curioso
 const $modalNote   = document.getElementById("modal-note");
 const $noteId      = document.getElementById("note-id");
 const $noteText    = document.getElementById("note-text");
@@ -50,17 +41,100 @@ const $noteClose   = document.getElementById("note-close");
 // favoritos actions
 const $btnOpenFavs = document.getElementById("btn-open-favs");
 
+// refs modal CREAR país
+const $btnOpenCreate = document.getElementById("btn-open-create");
+const $modalCreate   = document.getElementById("modal-create");
+const $createForm    = document.getElementById("create-form");
+const $createSave    = document.getElementById("create-save");
+const $createCancel  = document.getElementById("create-cancel");
+const $createClose   = document.getElementById("create-close");
+
 // =======================
 // Helpers UI
 // =======================
 const show = el => el.classList.remove("is-hidden");
 const hide = el => el.classList.add("is-hidden");
-function toast(msg, type="info"){
+
+//Muestra un aviso. Si hay un modal Bulma abierto, usa un modal de alerta para que el mensaje quede por encima. Si no, usa la banda amarilla (#alert)
+function toast(msg, type = "info") {
+  const anyModalOpen = document.querySelector(".modal.is-active");
+  if (anyModalOpen) {
+    showBulmaAlert({
+      title: typeTitle(type),
+      header: typeHeader(type),
+      message: msg,
+      color: typeToBulmaMessage(type)
+    });
+    return;
+  }
+  // Banda superior (alert original)
   $alert.textContent = msg;
   $alert.className = `notification is-${type}`;
   show($alert);
-  setTimeout(()=> hide($alert), 2000);
+  setTimeout(() => hide($alert), 2000);
 }
+
+// mapear tipo -> estilos / textos para el modal de alerta
+function typeToBulmaMessage(type){
+  if (type === "success") return "is-success";
+  if (type === "warning") return "is-warning";
+  if (type === "danger" || type === "error") return "is-danger";
+  return "is-info";
+}
+function typeTitle(type){
+  if (type === "success") return "Operación exitosa";
+  if (type === "warning") return "Atención";
+  if (type === "danger" || type === "error") return "Ocurrió un error";
+  return "Información";
+}
+function typeHeader(type){
+  if (type === "success") return "Listo";
+  if (type === "warning") return "Aviso";
+  if (type === "danger" || type === "error") return "Error";
+  return "Mensaje";
+}
+
+// Modal Bulma de alertas (#modal-alert) 
+function showBulmaAlert({
+  title = "Aviso",
+  header = "Mensaje",
+  message = "…",
+  color = "is-info" // is-success | is-warning | is-danger | is-info
+} = {}) {
+  const $m    = document.getElementById("modal-alert");
+  if(!$m) { // fallback si el modal no existe por algún motivo
+    $alert.textContent = message;
+    $alert.className = `notification ${color.replace("is-","is-")}`;
+    show($alert);
+    setTimeout(()=> hide($alert), 2000);
+    return;
+  }
+  const $t    = document.getElementById("alert-title");
+  const $h    = document.getElementById("alert-header");
+  const $txt  = document.getElementById("alert-text");
+  const $box  = document.getElementById("alert-box");
+  const $btnX = document.getElementById("alert-x");
+  const $btnClose = document.getElementById("alert-close");
+  const $btnOk = document.getElementById("alert-ok");
+
+  $t.textContent = title;
+  $h.textContent = header;
+  $txt.textContent = message;
+  $box.className = `message ${color}`;
+
+  $m.classList.add("is-active");
+
+  const close = () => {
+    $m.classList.remove("is-active");
+    $btnX.removeEventListener("click", close);
+    $btnClose.removeEventListener("click", close);
+    $btnOk.removeEventListener("click", close);
+  };
+  $btnX.addEventListener("click", close);
+  $btnClose.addEventListener("click", close);
+  $btnOk.addEventListener("click", close);
+}
+
 function openNoteModal(id, datoCurioso=""){
   editingFavId = id;
   $noteId.value = id;
@@ -72,14 +146,16 @@ function closeNoteModal(){
   $modalNote.classList.remove("is-active");
 }
 
+// Helpers para abrir/cerrar modal de creación
 function openCreateModal(){
   if($createForm) $createForm.reset();
   $modalCreate.classList.add("is-active");
 }
 function closeCreateModal(){
   $modalCreate.classList.remove("is-active");
-
 }
+
+// Helper: ¿ya es favorito este cca3?
 const isFavorite = (cca3) => FAVORITES.some(f => f.cca3 === cca3);
 
 // =======================
@@ -176,7 +252,7 @@ async function loadCountries(){
     document.getElementById("f-language").innerHTML =
       `<option value="">Todos</option>` + languages.map(l=> `<option value="${l}">${l}</option>`).join("");
 
-  // Cargar países propios desde MockAPI
+    // Cargar países propios desde MockAPI 
     await loadCustomCountries();
 
     applyFilters();
@@ -188,7 +264,7 @@ async function loadCountries(){
   }
 }
 
-// cargar países propios desde MockAPI (opcional)
+// cargar países propios desde MockAPI 
 async function loadCustomCountries(){
   if(!CUSTOM_COUNTRIES_URL || !CUSTOM_COUNTRIES_URL.includes("http")) return;
   try{
@@ -196,7 +272,7 @@ async function loadCustomCountries(){
     if(!res.ok) return;
     const custom = await res.json();
 
-// mapear al mismo shape de REST Countries
+    // mapear al mismo shape de REST Countries
     const mapped = custom.map(item => ({
       cca3: (item.cca3 || "").toUpperCase(),
       name: { common: item.name || item.cca3 || "—" },
@@ -207,7 +283,7 @@ async function loadCustomCountries(){
       flags: { png: item.flag || "", svg: item.flag || "" }
     }));
 
-// mezclar y ordenar
+    // mezclar y ordenar
     COUNTRIES = [...COUNTRIES, ...mapped]
       .sort((a,b)=> (a.name?.common||"").localeCompare(b.name?.common||""));
   }catch(e){
@@ -215,7 +291,7 @@ async function loadCustomCountries(){
   }
 }
 
-// helper para pasar "es, en" (español, ingles) 
+// helper para pasar "es, en" -> {es:"es", en:"en"}
 function parseLanguagesToObject(input){
   if(!input) return null;
   const arr = String(input).split(",").map(s=> s.trim()).filter(Boolean);
@@ -228,18 +304,6 @@ function parseLanguagesToObject(input){
 // =======================
 // Favorites (MockAPI) CRUD
 // =======================
-async function loadFavorites(){
-  try{
-    const res = await fetch(MOCKAPI_URL);
-    FAVORITES = await res.json();
-    renderFavorites();
-    renderCountries(FILTERED.length ? FILTERED : COUNTRIES);
-  }catch(e){
-    console.warn("Error cargando favoritos:", e);
-    toast("No se pudieron cargar los favoritos.", "warning");
-  }
-}
-
 function renderFavorites(){
   if(!FAVORITES.length){
     $favTable.innerHTML = `<tr><td colspan="5" class="has-text-centered has-text-grey">Sin favoritos todavía.</td></tr>`;
@@ -247,7 +311,7 @@ function renderFavorites(){
   }
   $favTable.innerHTML = FAVORITES.map(f => `
     <tr>
-      <td><img src="${f.flag||''}" alt="${f.name||f.cca3}" style="width:40px;height:28px;object-fit:cover;border-radius:4px"></td>
+      <td><img src="${f.flag||''}" alt="${f.name||f.cca3}" style="width:40px;height:28px;object-fit:cover;border-radius:4px" onerror="this.src='https://via.placeholder.com/40x28?text=%20'"></td>
       <td>${f.name||f.cca3}</td>
       <td>${f.region||'—'}</td>
       <td>${f.datoCurioso||'—'}</td>
@@ -261,6 +325,18 @@ function renderFavorites(){
       </td>
     </tr>
   `).join("");
+}
+
+async function loadFavorites(){
+  try{
+    const res = await fetch(MOCKAPI_URL);
+    FAVORITES = await res.json();
+    renderFavorites();
+    renderCountries(FILTERED.length ? FILTERED : COUNTRIES);
+  }catch(e){
+    console.warn("Error cargando favoritos:", e);
+    toast("No se pudieron cargar los favoritos.", "warning");
+  }
 }
 
 window.onAddFavorite = async function(cca3){
@@ -297,6 +373,7 @@ window.onAddFavorite = async function(cca3){
 };
 
 window.onDeleteFavorite = async function(id){
+
   if(!confirm("¿Eliminar este favorito?")) return;
   try{
     await fetch(`${MOCKAPI_URL}/${id}`, { method:"DELETE" });
@@ -338,54 +415,109 @@ $noteCancel.addEventListener("click", closeNoteModal);
 $noteClose .addEventListener("click", closeNoteModal);
 
 // =======================
-// Modal Crear País
+// Crear País (POST a MockAPI countries)
 // =======================
-$btnOpenCreate.addEventListener("click", ()=> $modalCreate.classList.add("is-active"));
-$btnCreateCancel.addEventListener("click", ()=> $modalCreate.classList.remove("is-active"));
-$createClose.addEventListener("click", ()=> $modalCreate.classList.remove("is-active"));
 
-// =======================
-// Crear País (POST)
-// =======================
-$btnCreateSave.addEventListener("click", async ()=>{
-  const formData = new FormData($createForm);
-  const body = {
-    name: formData.get("name"),
-    cca3: formData.get("cca3").toUpperCase(),
-    region: formData.get("region"),
-    capital: formData.get("capital") || "—",
-    languages: formData.get("languages") 
-      ? formData.get("languages").split(",").map(l=>l.trim()) 
-      : [],
-    population: Number(formData.get("population") || 0),
-    flags: { png: formData.get("flag"), svg: formData.get("flag") }
+// abrir/cerrar modal crear
+$btnOpenCreate && $btnOpenCreate.addEventListener("click", openCreateModal);
+$createCancel && $createCancel.addEventListener("click", closeCreateModal);
+$createClose  && $createClose .addEventListener("click", closeCreateModal);
+
+// guardar país
+$createSave && $createSave.addEventListener("click", async ()=>{
+  if(!$createForm) return;
+
+  // tomar valores
+  const fd = new FormData($createForm);
+  const name       = (fd.get("name")||"").toString().trim();
+  const cca3       = (fd.get("cca3")||"").toString().trim().toUpperCase();
+  const region     = (fd.get("region")||"").toString().trim();
+  const capital    = (fd.get("capital")||"").toString().trim();
+  const languages  = (fd.get("languages")||"").toString().trim();
+  const population = Number(fd.get("population")||0);
+  const flag       = (fd.get("flag")||"").toString().trim(); 
+
+  // validaciones mínimas 
+  if(!name || !cca3 || !region){
+    toast("Completá los campos obligatorios: nombre, CCA3 y región.", "warning");
+    return;
+  }
+  if(!/^[A-Z]{3}$/.test(cca3)){
+    toast("El CCA3 debe ser 3 letras (A–Z).", "warning");
+    return;
+  }
+  // evitar duplicados por cca3
+  const exists = COUNTRIES.some(c => (c.cca3||"").toUpperCase() === cca3);
+  if(exists){
+    toast("Ya existe un país con ese CCA3.", "warning");
+    return;
+  }
+
+  // objeto para MockAPI countries 
+  const payload = {
+    name,
+    cca3,
+    region,
+    capital,
+    languages,     
+    population,
+    flag           
   };
 
   try{
-    const res = await fetch(CUSTOM_COUNTRIES_URL, {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify(body)
-    });
-    const created = await res.json();
-
-    COUNTRIES.push(created);   // agregar al array local
-    applyFilters();            // refrescar vista
-    toast("País creado correctamente","success");
-    $modalCreate.classList.remove("is-active");
-    $createForm.reset();
+    if(CUSTOM_COUNTRIES_URL && CUSTOM_COUNTRIES_URL.includes("http")){
+      const res = await fetch(CUSTOM_COUNTRIES_URL, {
+        method:"POST",
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      if(!res.ok) throw new Error("HTTP "+res.status);
+      // mapear al shape de las cards y sumar a COUNTRIES
+      const mapped = {
+        cca3,
+        name: { common: name },
+        region,
+        capital: capital ? [capital] : [],
+        languages: parseLanguagesToObject(languages),
+        population: population || 0,
+        flags: { png: flag || "", svg: flag || "" }
+      };
+      COUNTRIES.push(mapped);
+      // reordenar y refrescar
+      COUNTRIES.sort((a,b)=> (a.name?.common||"").localeCompare(b.name?.common||""));
+      applyFilters();
+      closeCreateModal();
+      toast("País creado con éxito.", "success");
+    }else{
+      // sin URL configurada: agregar localmente igual
+      const mapped = {
+        cca3,
+        name: { common: name },
+        region,
+        capital: capital ? [capital] : [],
+        languages: parseLanguagesToObject(languages),
+        population: population || 0,
+        flags: { png: flag || "", svg: flag || "" }
+      };
+      COUNTRIES.push(mapped);
+      COUNTRIES.sort((a,b)=> (a.name?.common||"").localeCompare(b.name?.common||""));
+      applyFilters();
+      closeCreateModal();
+      toast("País agregado localmente (configura CUSTOM_COUNTRIES_URL para persistir).", "warning");
+    }
   }catch(e){
     console.error(e);
-    toast("Error al crear país","danger");
+    toast("No se pudo crear el país.", "danger");
   }
 });
 
 // =======================
-// Eventos filtros
+// Eventos filtros (individuales)
 // =======================
-$fName    .addEventListener("input", applyFilters);
+$fName    .addEventListener("input",  applyFilters);
 $fRegion  .addEventListener("change", applyFilters);
 $fLanguage.addEventListener("change", applyFilters);
+
 $btnClear .addEventListener("click", e=>{
   e.preventDefault();
   $fName.value=""; $fRegion.value=""; $fLanguage.value="";
@@ -401,6 +533,6 @@ $btnOpenFavs && $btnOpenFavs.addEventListener("click", e=>{
 // Init
 // =======================
 (async function init(){
-  await loadCountries();
+  await loadCountries();   
   await loadFavorites();
 })();

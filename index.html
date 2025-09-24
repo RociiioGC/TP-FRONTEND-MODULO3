@@ -89,24 +89,19 @@
         </header>
     
         <section class="modal-card-body">
+          
           <!-- Estructura del formulario con campos e IDs/NAMEs consistentes -->
           <form id="create-form">
             <div class="columns is-multiline">
               <div class="column is-6">
                 <label class="label">Nombre*</label>
-                <input class="input" name="name" required placeholder="Ej: Wakanda">
-              </div>
-    
-              <div class="column is-3">
-                <label class="label">Código (CCA3)*</label>
-                <input class="input" name="cca3" maxlength="3" required placeholder="Ej: WAK">
+                <input class="input" name="name" >
               </div>
     
               <div class="column is-3">
                 <label class="label">Región*</label>
                 <div class="select is-fullwidth">
                   <select name="region" required>
-                    <option value="">Elegí…</option>
                     <option>Africa</option>
                     <option>Americas</option>
                     <option>Asia</option>
@@ -118,22 +113,22 @@
     
               <div class="column is-6">
                 <label class="label">Capital</label>
-                <input class="input" name="capital" placeholder="Ej: Birnin Zana">
+                <input class="input" name="capital">
               </div>
     
               <div class="column is-6">
                 <label class="label">Idiomas (separados por coma)</label>
-                <input class="input" name="languages" placeholder="Ej: Wakandan, English">
+                <input class="input" name="languages" >
               </div>
     
               <div class="column is-6">
                 <label class="label">Población</label>
-                <input class="input" name="population" type="number" min="0" placeholder="Ej: 3500000">
+                <input class="input" name="population" type="number" min="0">
               </div>
     
               <div class="column is-6">
-                <label class="label">Flag URL (PNG/SVG)*</label>
-                <input class="input" name="flag" required placeholder="https://…/flag.png">
+                <label class="label">Flag URL</label>
+                <input class="input" name="flag">
               </div>
             </div>
           </form>
@@ -265,6 +260,29 @@
     </div>
   </div>
 
+  <!-- Modal de Alertas (Bulma) -->
+<div class="modal" id="modal-alert">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title" id="alert-title">Aviso</p>
+      <button class="delete" aria-label="close" id="alert-close"></button>
+    </header>
+    <section class="modal-card-body">
+      <article class="message is-info" id="alert-box">
+        <div class="message-header">
+          <p id="alert-header">Mensaje</p>
+          <button class="delete" aria-label="close" id="alert-x"></button>
+        </div>
+        <div class="message-body" id="alert-text">…</div>
+      </article>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-primary" id="alert-ok">OK</button>
+    </footer>
+  </div>
+</div>
+
   <!-- Footer -->
   <footer class="footer has-background-link has-text-white">
     <div class="container">
@@ -300,7 +318,6 @@
           <h4 class="title is-6 has-text-white">Contacto</h4>
           <p><i class="fa-solid fa-location-dot mr-2"></i> Londres, Reino Unido</p>
           <p><i class="fa-solid fa-envelope mr-2"></i> contacto@paises.com</p>
-          <p><i class="fa-solid fa-clock mr-2"></i> Lunes a Viernes: 9am - 6pm</p>
         </div>
   
         <!-- Columna 3: enlaces rápidos -->
