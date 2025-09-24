@@ -3,8 +3,6 @@
 // =======================
 const COUNTRIES_URL = "https://restcountries.com/v3.1/all?fields=name,cca3,region,languages,flags,population,capital";
 const MOCKAPI_URL   = "https://68bdeb02227c48698f85a6c4.mockapi.io/api/v1/favorites";
-
-// recurso de países propios creado en MockAPI como 'countries'
 const CUSTOM_COUNTRIES_URL = "https://68bdeb02227c48698f85a6c4.mockapi.io/api/v1/countries";
 
 // =======================
@@ -13,7 +11,6 @@ const CUSTOM_COUNTRIES_URL = "https://68bdeb02227c48698f85a6c4.mockapi.io/api/v1
 let COUNTRIES = [];
 let FILTERED  = [];
 let FAVORITES = [];
-
 let editingFavId = null;
 
 // =======================
@@ -55,7 +52,7 @@ const $createClose   = document.getElementById("create-close");
 const show = el => el.classList.remove("is-hidden");
 const hide = el => el.classList.add("is-hidden");
 
-//Muestra un aviso. Si hay un modal Bulma abierto, usa un modal de alerta para que el mensaje quede por encima. Si no, usa la banda amarilla (#alert)
+// Muestra un aviso. Si hay un modal Bulma abierto, usa un modal de alerta para que el mensaje quede por encima. Si no, usa la banda amarilla (#alert)
 function toast(msg, type = "info") {
   const anyModalOpen = document.querySelector(".modal.is-active");
   if (anyModalOpen) {
@@ -67,14 +64,13 @@ function toast(msg, type = "info") {
     });
     return;
   }
-  // Banda superior (alert original)
   $alert.textContent = msg;
   $alert.className = `notification is-${type}`;
   show($alert);
   setTimeout(() => hide($alert), 2000);
 }
 
-// mapear tipo -> estilos / textos para el modal de alerta
+// Mapear tipo -> estilos / textos para el modal de alerta
 function typeToBulmaMessage(type){
   if (type === "success") return "is-success";
   if (type === "warning") return "is-warning";
@@ -99,10 +95,10 @@ function showBulmaAlert({
   title = "Aviso",
   header = "Mensaje",
   message = "…",
-  color = "is-info" // is-success | is-warning | is-danger | is-info
+  color = "is-info"
 } = {}) {
   const $m    = document.getElementById("modal-alert");
-  if(!$m) { // fallback si el modal no existe por algún motivo
+  if(!$m) {
     $alert.textContent = message;
     $alert.className = `notification ${color.replace("is-","is-")}`;
     show($alert);
@@ -121,7 +117,6 @@ function showBulmaAlert({
   $h.textContent = header;
   $txt.textContent = message;
   $box.className = `message ${color}`;
-
   $m.classList.add("is-active");
 
   const close = () => {
@@ -144,12 +139,11 @@ function openBulmaConfirm({
   message = "¿Seguro que querés continuar?",
   okText = "Aceptar",
   cancelText = "Cancelar",
-  okColor = "is-danger" // is-primary / is-warning / etc
+  okColor = "is-danger"
 } = {}) {
   return new Promise(resolve => {
     const $m       = document.getElementById("modal-confirm");
     if(!$m){
-      // fallback si no existe el modal (no rompe el flujo)
       const ok = window.confirm(message);
       resolve(ok);
       return;
@@ -166,7 +160,6 @@ function openBulmaConfirm({
     $header.textContent = header;
     $text.textContent   = message;
 
-    // Botón OK: color + etiqueta
     $ok.className = `button ${okColor}`;
     const okLabelSpan = $ok.querySelector("span:last-child");
     if (okLabelSpan) okLabelSpan.textContent = okText;
@@ -218,6 +211,30 @@ function closeCreateModal(){
 
 // Helper: ¿ya es favorito este cca3?
 const isFavorite = (cca3) => FAVORITES.some(f => f.cca3 === cca3);
+
+// =======================
+// Helpers de datos
+// =======================
+
+// Genera un CCA3 desde el nombre (3 letras en mayúscula, solo A–Z)
+function generateCCA3FromName(name = "") {
+  const letters = (name || "")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // sin tildes
+    .replace(/[^a-zA-Z]/g, "")
+    .toUpperCase()
+    .slice(0, 3)
+    .padEnd(3, "X");
+
+  let candidate = letters || "XXX";
+  // Evitar colisiones con existentes
+  let suffix = 1;
+  while (COUNTRIES.some(c => (c.cca3||"").toUpperCase() === candidate)) {
+    candidate = letters.slice(0,2) + String(suffix % 10); // ej: RO1
+    suffix++;
+    if (candidate.length < 3) candidate = candidate.padEnd(3,"X");
+  }
+  return candidate;
+}
 
 // =======================
 // Countries: load + render
@@ -333,18 +350,20 @@ async function loadCustomCountries(){
     if(!res.ok) return;
     const custom = await res.json();
 
-    // mapear al mismo shape de REST Countries
-    const mapped = custom.map(item => ({
-      cca3: (item.cca3 || "").toUpperCase(),
-      name: { common: item.name || item.cca3 || "—" },
-      region: item.region || "",
-      capital: item.capital ? [item.capital] : [],
-      languages: parseLanguagesToObject(item.languages),
-      population: Number(item.population) || 0,
-      flags: { png: item.flag || "", svg: item.flag || "" }
-    }));
+    // mapear al mismo shape de REST Countries (con fallback de cca3)
+    const mapped = custom.map(item => {
+      const cca3 = (item.cca3 || generateCCA3FromName(item.name)).toUpperCase();
+      return {
+        cca3,
+        name: { common: item.name || cca3 },
+        region: item.region || "",
+        capital: item.capital ? [item.capital] : [],
+        languages: parseLanguagesToObject(item.languages),
+        population: Number(item.population) || 0,
+        flags: { png: item.flag || "", svg: item.flag || "" }
+      };
+    });
 
-    // mezclar y ordenar
     COUNTRIES = [...COUNTRIES, ...mapped]
       .sort((a,b)=> (a.name?.common||"").localeCompare(b.name?.common||""));
   }catch(e){
@@ -405,7 +424,6 @@ window.onAddFavorite = async function(cca3){
     toast("Este país ya está en tus favoritos.", "warning");
     return;
   }
-
   const c = COUNTRIES.find(x=> x.cca3 === cca3);
   if(!c){ toast("País no encontrado","warning"); return; }
 
@@ -496,14 +514,14 @@ $createClose  && $createClose .addEventListener("click", closeCreateModal);
 $createSave && $createSave.addEventListener("click", async ()=>{
   if(!$createForm) return;
 
-  // tomar valores
+  // tomar valores del form
   const fd = new FormData($createForm);
   const name       = (fd.get("name")||"").toString().trim();
   const region     = (fd.get("region")||"").toString().trim();
   const capital    = (fd.get("capital")||"").toString().trim();
   const languages  = (fd.get("languages")||"").toString().trim();
   const population = Number(fd.get("population")||0);
-  const flag       = (fd.get("flag")||"").toString().trim(); 
+  const flag       = (fd.get("flag")||"").toString().trim();
 
   // validaciones mínimas 
   if(!name || !region){
@@ -511,9 +529,13 @@ $createSave && $createSave.addEventListener("click", async ()=>{
     return;
   }
 
+  // Generar CCA3 automáticamente 
+  const cca3 = generateCCA3FromName(name);
+
   // objeto para MockAPI countries 
   const payload = {
     name,
+    cca3,            // << clave única reintroducida
     region,
     capital,
     languages,     
@@ -529,17 +551,19 @@ $createSave && $createSave.addEventListener("click", async ()=>{
         body: JSON.stringify(payload)
       });
       if(!res.ok) throw new Error("HTTP "+res.status);
+      const saved = await res.json();
+
       // mapear al shape de las cards y sumar a COUNTRIES
       const mapped = {
-        name: { common: name },
-        region,
-        capital: capital ? [capital] : [],
-        languages: parseLanguagesToObject(languages),
-        population: population || 0,
-        flags: { png: flag || "", svg: flag || "" }
+        cca3: (saved.cca3 || cca3).toUpperCase(),
+        name: { common: saved.name },
+        region: saved.region,
+        capital: saved.capital ? [saved.capital] : [],
+        languages: parseLanguagesToObject(saved.languages),
+        population: saved.population || 0,
+        flags: { png: saved.flag || "", svg: saved.flag || "" }
       };
       COUNTRIES.push(mapped);
-      // reordenar y refrescar
       COUNTRIES.sort((a,b)=> (a.name?.common||"").localeCompare(b.name?.common||""));
       applyFilters();
       closeCreateModal();
@@ -547,6 +571,7 @@ $createSave && $createSave.addEventListener("click", async ()=>{
     }else{
       // sin URL configurada: agregar localmente igual
       const mapped = {
+        cca3,
         name: { common: name },
         region,
         capital: capital ? [capital] : [],
