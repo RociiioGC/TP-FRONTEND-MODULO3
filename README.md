@@ -38,15 +38,20 @@ Permite filtrar, agregar a favoritos y añadir un **dato curioso** a cada país 
 
 ---
 
-## 📸 Capturas
-### Vista general
-https://i.postimg.cc/qqk7vnt4/temp-Image-Xxjbdy.avif
+## 🖼️ Capturas de pantalla
 
-### Favoritos
-https://i.postimg.cc/V696w4kK/Lista-Favoritos.avif
+### 📌 Página principal
+![Página principal](assets/pagina-principal.png)
 
-### Pie de Pagina 
-https://i.postimg.cc/76r6jjwC/Pie-De-Pagina.avif
+### ➕ Crear país
+![Crear país](assets/crear-pais.png)
+
+### ⭐ Favoritos
+![Favoritos](assets/favoritos.png)
+
+### 📑 Pie de página
+![Pie de página](assets/pie-de-pagina.png)
+
 
 ---
 
